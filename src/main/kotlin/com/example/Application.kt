@@ -3,6 +3,7 @@ package com.example
 import com.example.plugins.*
 import com.example.repository.AuthRepositoryImpl
 import com.example.repository.AuthRepository
+import com.example.repository.PostRepository
 import com.example.security.JwtService
 import com.example.security.TokenService
 import com.example.security.hashing.HashingService
@@ -22,6 +23,7 @@ fun Application.module() {
 
     val hashingService: HashingService by inject()
     val authRepository: AuthRepository by inject()
+    val postRepository: PostRepository by inject()
     val tokenService: TokenService by inject()
     val tokenConfig = TokenConfig(
         issuer = "http://0.0.0.0:8080/",
@@ -36,6 +38,7 @@ fun Application.module() {
     configureRouting(
         hashingService = hashingService,
         authRepository = authRepository,
+        postRepository = postRepository,
         tokenService = tokenService,
         tokenConfig = tokenConfig
     )

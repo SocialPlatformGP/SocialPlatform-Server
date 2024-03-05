@@ -96,7 +96,7 @@ fun Route.signIn(
         }
         val token = tokenService.generateToken(
             config = tokenConfig,
-            TokenClaim(name = "userId", value = user.id),
+            TokenClaim(name = "userId", value = user.id.toString()),
             TokenClaim(name = "email", value = user.email)
         )
 
