@@ -1,26 +1,36 @@
 package com.example.plugins
 
-import io.ktor.http.*
-import io.ktor.resources.*
+import com.example.repository.AuthRepository
+import com.example.routes.authenticate
+import com.example.routes.home
+import com.example.routes.signIn
+import com.example.routes.signUp
+import com.example.security.TokenService
+import com.example.security.hashing.HashingService
+import com.example.security.token.TokenConfig
 import io.ktor.server.application.*
-import io.ktor.server.http.content.*
-import io.ktor.server.plugins.statuspages.*
-import io.ktor.server.resources.*
-import io.ktor.server.resources.Resources
-import io.ktor.server.response.*
 import io.ktor.server.routing.*
-import kotlinx.serialization.Serializable
 
-fun Application.configureRouting() {
-    install(StatusPages) {
-        exception<Throwable> { call, cause ->
-            call.respondText(text = "500: $cause", status = HttpStatusCode.InternalServerError)
-        }
-    }
+fun Application.configureRouting(
+    hashingService: HashingService,
+    authRepository: AuthRepository,
+    tokenService: TokenService,
+    tokenConfig: TokenConfig
+) {
+
     routing {
-        get("/") {
-            call.respondText("Hello World!")
-        }
+        signUp(
+            hashingService = hashingService,
+            authRepository = authRepository
+        )
+
+        signIn(
+            authRepository = authRepository,
+            tokenService = tokenService,
+            hashingService = hashingService,
+            tokenConfig = tokenConfig
+        )
+        authenticate()
+        home()
     }
 }
-

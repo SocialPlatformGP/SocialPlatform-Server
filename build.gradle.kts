@@ -4,10 +4,16 @@ val logback_version: String by project
 
 val exposed_version: String by project
 val h2_version: String by project
+
+val koin_version : String by project
+val kmongo_version : String by project
+val status_pages : String by project
+
 plugins {
     kotlin("jvm") version "1.9.22"
     id("io.ktor.plugin") version "2.3.8"
     id("org.jetbrains.kotlin.plugin.serialization") version "1.9.22"
+    id("com.google.devtools.ksp") version "1.9.22-1.0.16"
 }
 
 group = "com.example"
@@ -49,4 +55,18 @@ dependencies {
     implementation("ch.qos.logback:logback-classic:$logback_version")
     testImplementation("io.ktor:ktor-server-tests-jvm")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version")
+
+
+    // Koin
+    implementation("io.insert-koin:koin-core:$koin_version")
+    implementation("io.insert-koin:koin-ktor:$koin_version")
+    implementation ("io.insert-koin:koin-logger-slf4j:$koin_version")
+    // Kmongo
+    implementation("org.litote.kmongo:kmongo:$kmongo_version")
+    implementation("org.litote.kmongo:kmongo-coroutine-serialization:$kmongo_version")
+    implementation("org.litote.kmongo:kmongo-id:$kmongo_version")
+
+    //Kotlinx Serialization for json
+    implementation("io.ktor:ktor-serialization-kotlinx-json-jvm:2.2.4")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.1")
 }
