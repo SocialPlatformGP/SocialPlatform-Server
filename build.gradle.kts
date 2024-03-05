@@ -31,6 +31,10 @@ repositories {
 }
 
 dependencies {
+
+    implementation("io.ktor:ktor-server-openapi:$ktor_version")
+    implementation("io.swagger.codegen.v3:swagger-codegen-generators:1.0.36")
+
     implementation("io.ktor:ktor-server-core-jvm")
     implementation("io.ktor:ktor-server-auth-jvm")
     implementation("io.ktor:ktor-server-auth-jwt-jvm")
@@ -69,4 +73,9 @@ dependencies {
     //Kotlinx Serialization for json
     implementation("io.ktor:ktor-serialization-kotlinx-json-jvm:2.2.4")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.1")
+
+    implementation("io.swagger.core.v3:swagger-core:2.1.10")
+    implementation("io.swagger.core.v3:swagger-annotations:2.1.10")
+    implementation("io.swagger.core.v3:swagger-models:2.1.10")
+    implementation("io.swagger.core.v3:swagger-integration:2.1.10")
 }
