@@ -1,91 +1,123 @@
-# SocialPlatform-Server
-ServerSide  using ktor framework and mongo for database
+
+
+
+## Table of Contents
+
+- [Authentication API Endpoints](#authentication-api-endpoints)
+- [Post Management API Endpoints](#post-management-api-endpoints)
+
+---
 
 ## Authentication API Endpoints
 
 ### 1. Sign Up
 
-- **Endpoint**: `POST /signup`
-- **Description**: This endpoint is used to create a new user account.
-  
-#### Request
-- **Method**: `POST`
-- **Headers**: None
-- **Body**:
-  ```json
-  {
-    "username": "example",
-    "email": "example@example.com",
-    "password": "password123"
-  }
-  ```
-  - `username`: User's username (required)
-  - `email`: User's email address (required)
-  - `password`: User's password (required)
-
-#### Response
-- **Status Code**: 
+| Property      | Value                           |
+|---------------|---------------------------------|
+| **Endpoint**  | `POST /signup`                  |
+| **Method**    | `POST`                          |
+| **Description** | Create a new user account.     |
+| **Headers**   | None                            |
+| **Request Body** | json
+                    {
+                      "username": "example",
+                      "email": "example@example.com",
+                      "password": "password123"
+                    }
+                                               |
+| **Response Status Codes** | 
   - `200 OK`: User account created successfully.
   - `400 Bad Request`: Missing or invalid request body.
   - `409 Conflict`: 
     - If any field is blank in the request body.
     - If the password is too short (less than 6 characters).
-    - If an error occurs while creating the user account.
+    - If an error occurs while creating the user account. |
+
 
 ### 2. Sign In
 
-- **Endpoint**: `POST /signin`
-- **Description**: This endpoint is used to authenticate and sign in a user.
-  
-#### Request
-- **Method**: `POST`
-- **Headers**: None
-- **Body**:
-  ```json
-  {
-    "email": "example@example.com",
-    "password": "password123"
-  }
-  ```
-  - `email`: User's email address (required)
-  - `password`: User's password (required)
+| Property      | Value                           |
+|---------------|---------------------------------|
+| **Endpoint**  | `POST /signin`                  |
+| **Method**    | `POST`                          |
+| **Description** | Authenticate and sign in a user. |
+| **Headers**   | None                            |
+| **Request Body** | json|
 
-#### Response
-- **Status Code**: 
+
+                    {
+                      "email": "example@example.com",
+                      "password": "password123"
+                    }
+
+                                            
+| **Response Status Codes** | 
   - `200 OK`: User authenticated successfully. Returns a JWT token.
   - `400 Bad Request`: Missing or invalid request body.
   - `409 Conflict`: 
     - If any field is blank in the request body.
-    - If the provided email doesn't exist or password is incorrect.
+    - If the provided email doesn't exist or password is incorrect. |
 
 ### 3. Authenticate
 
-- **Endpoint**: `GET /authenticate`
-- **Description**: This endpoint is used to verify if a user is authenticated.
-  
-#### Request
-- **Method**: `GET`
-- **Headers**: 
-  - `Authorization: Bearer <JWT Token>` (required)
-
-#### Response
-- **Status Code**: 
-  - `200 OK`: User is authenticated.
+| Property      | Value                           |
+|---------------|---------------------------------|
+| **Endpoint**  | `GET /authenticate`             |
+| **Method**    | `GET`                           |
+| **Description** | Verify if a user is authenticated. |
+| **Headers**   | `Authorization: Bearer <JWT Token>` (required) |
+| **Response Status Codes** | 
+  - `200 OK`: User is authenticated.       |
 
 ### 4. Home
 
-- **Endpoint**: `GET /home`
-- **Description**: This endpoint is used to retrieve the user's information after authentication.
-  
-#### Request
-- **Method**: `GET`
-- **Headers**: 
-  - `Authorization: Bearer <JWT Token>` (required)
-
-#### Response
-- **Status Code**: 
+| Property      | Value                           |
+|---------------|---------------------------------|
+| **Endpoint**  | `GET /home`                     |
+| **Method**    | `GET`                           |
+| **Description** | Retrieve user's information after authentication. |
+| **Headers**   | `Authorization: Bearer <JWT Token>` (required) |
+| **Response Status Codes** | 
   - `200 OK`: Returns the user's ID and email address.
-  - `401 Unauthorized`: User is not authenticated.
+  - `401 Unauthorized`: User is not authenticated. |
+
 
 ---
+
+## Post Management API Endpoints
+
+### 1. Create Post
+
+| Property      | Value                           |
+|---------------|---------------------------------|
+| **Endpoint**  | `POST /createPost`             |
+| **Method**    | `POST`                          |
+| **Description** | Create a new post.            |
+| **Headers**   | None                            |
+| **Request Body** | json
+                    {
+                      "title": "Sample Title",
+                      "body": "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+                      "userId": "user123"
+                    }
+                                               |
+| **Response Status Codes** | 
+  - `200 OK`: Post created successfully.
+  - `400 Bad Request`: Missing or invalid request body.
+  - `409 Conflict`: 
+    - If any field is blank in the request body.
+    - If an error occurs while creating the post. |
+
+### 2. Get All Posts
+
+| Property      | Value                           |
+|---------------|---------------------------------|
+| **Endpoint**  | `GET /getAllPosts`             |
+| **Method**    | `GET`                          |
+| **Description** | Retrieve all posts.           |
+| **Headers**   | None                            |
+| **Response Status Codes** | 
+  - `200 OK`: Returns a list of all posts.
+  - `404 Not Found`: No posts found.         |
+
 
