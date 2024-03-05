@@ -12,7 +12,6 @@ import io.ktor.server.routing.*
 import kotlinx.serialization.Serializable
 
 fun Application.configureRouting() {
-    install(Resources)
     install(StatusPages) {
         exception<Throwable> { call, cause ->
             call.respondText(text = "500: $cause", status = HttpStatusCode.InternalServerError)
@@ -22,17 +21,6 @@ fun Application.configureRouting() {
         get("/") {
             call.respondText("Hello World!")
         }
-        get<Articles> { article ->
-            // Get all articles ...
-            call.respond("List of articles sorted starting from ${article.sort}")
-        }
-        // Static plugin. Try to access `/static/index.html`
-        static("/static") {
-            resources("static")
-        }
     }
 }
 
-@Serializable
-@Resource("/articles")
-class Articles(val sort: String? = "new")

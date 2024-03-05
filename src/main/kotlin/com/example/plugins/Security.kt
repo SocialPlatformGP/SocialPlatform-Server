@@ -56,24 +56,7 @@ fun Application.configureSecurity() {
             cookie.extensions["SameSite"] = "lax"
         }
     }
-    routing {
-        authenticate("auth-oauth-google") {
-            get("login") {
-                call.respondRedirect("/callback")
-            }
 
-            get("/callback") {
-                val principal: OAuthAccessTokenResponse.OAuth2? = call.authentication.principal()
-                call.sessions.set(UserSession(principal?.accessToken.toString()))
-                call.respondRedirect("/hello")
-            }
-        }
-        get("/session/increment") {
-            val session = call.sessions.get<MySession>() ?: MySession()
-            call.sessions.set(session.copy(count = session.count + 1))
-            call.respondText("Counter is ${session.count}. Refresh to increment.")
-        }
-    }
 }
 
 class UserSession(accessToken: String)
