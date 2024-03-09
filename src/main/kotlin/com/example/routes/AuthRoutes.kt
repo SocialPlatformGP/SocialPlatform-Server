@@ -1,9 +1,10 @@
 package com.example.routes
 
-import com.example.data.requests.AuthRequest
 import com.example.data.requests.SignUpRequest
 import com.example.data.responses.AuthResponse
 import com.example.data.models.User
+import com.example.data.requests.CheckExistUserRequest
+import com.example.data.requests.LoginRequest
 import com.example.repository.AuthRepository
 import com.example.security.TokenService
 import com.example.security.hashing.HashingService
@@ -22,38 +23,69 @@ fun Route.signUp(
     hashingService: HashingService,
     authRepository: AuthRepository
 ) {
+    post("checkExistUser"){
+        val request = call.receiveNullable<CheckExistUserRequest>()?: kotlin.run {
+            call.respond(HttpStatusCode.BadRequest)
+            return@post
+        }
+        val fieldsBlank = request.email.isBlank() || request.password.isBlank()
+        val tooShortPassword = request.password.length < 6
+        if(fieldsBlank){
+            call.respond(HttpStatusCode.Conflict, message = "Fields required")
+            return@post
+        }
+        if (tooShortPassword) {
+            call.respond(HttpStatusCode.Conflict, message = "Password too short")
+            return@post
+        }
+        if(authRepository.findUserByEmail(request.email) != null){
+            call.respond(HttpStatusCode.Conflict, message = "User already exists")
+            return@post
+        }else{
+            call.respond(HttpStatusCode.OK, message = "User does not exist")
+        }
+    }
+
+
     post("signup") {
         val request = call.receiveNullable<SignUpRequest>() ?: kotlin.run {
             call.respond(HttpStatusCode.BadRequest)
             return@post
         }
-        val fieldsBlank = request.email.isBlank() || request.password.isBlank() || request.username.isBlank()
-        val tooShortPassword = request.password.length < 6
+        val fieldsBlank =
+            request.userPhoneNumber.isBlank()
+                    || request.userFirstName.isBlank()
+                    || request.userLastName.isBlank()
+                    || request.userBio.isBlank()
+                    || request.userBirthdate.isBlank()
+                    || request.userProfilePictureURL.isBlank()
 
         if (fieldsBlank) {
             call.respond(HttpStatusCode.Conflict, message = "Fields required")
             return@post
         }
 
-        if (tooShortPassword) {
-            call.respond(HttpStatusCode.Conflict, message = "Password too short")
-            return@post
-        }
-        val saltedHash = hashingService.generateHash(request.password)
+        val saltedHash = hashingService.generateHash(request.userPassword)
         val user = User(
-            username = request.username,
-            password = saltedHash.hash,
-            email = request.email,
-            salt = saltedHash.salt
+            userFirstName = request.userFirstName,
+            userPassword = saltedHash.hash,
+            userEmail = request.userEmail,
+            salt = saltedHash.salt,
+            userBirthdate = request.userBirthdate,
+            userBio = request.userBio,
+            userProfilePictureURL = request.userProfilePictureURL,
+            userPhoneNumber = request.userPhoneNumber
         )
 
         val wasAcknowledged = authRepository.createUser(user = user)
         if (!wasAcknowledged) {
             call.respond(HttpStatusCode.Conflict, message = "Error Creating the user")
             return@post
+        }else{
+            call.respond(HttpStatusCode.OK)
         }
 
-        call.respond(HttpStatusCode.OK)
+
 
     }
 }
@@ -66,7 +98,7 @@ fun Route.signIn(
     tokenConfig: TokenConfig
 ) {
     post("signin") {
-        val request = call.receiveNullable<AuthRequest>() ?: kotlin.run {
+        val request = call.receiveNullable<LoginRequest>() ?: kotlin.run {
             call.respond(HttpStatusCode.BadRequest)
             return@post
         }
@@ -79,13 +111,13 @@ fun Route.signIn(
 
         val user = authRepository.findUserByEmail(request.email)
         if (user == null) {
-            call.respond(HttpStatusCode.Conflict, message = "Incorrect Username or Password")
+            call.respond(HttpStatusCode.Conflict, message = "Email does not exist")
             return@post
         }
 
         val isValidPassword = hashingService.verify(
             plainText = request.password, saltedHash = SaltedHash(
-                hash = user.password,
+                hash = user.userPassword,
                 salt = user.salt
             )
         )
@@ -97,7 +129,7 @@ fun Route.signIn(
         val token = tokenService.generateToken(
             config = tokenConfig,
             TokenClaim(name = "userId", value = user.id),
-            TokenClaim(name = "email", value = user.email)
+            TokenClaim(name = "email", value = user.userEmail)
         )
 
         call.respond(status = HttpStatusCode.OK, message = AuthResponse(token = token))
