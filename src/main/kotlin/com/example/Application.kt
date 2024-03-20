@@ -3,7 +3,9 @@ package com.example
 import com.example.plugins.*
 import com.example.repository.AuthRepositoryImpl
 import com.example.repository.AuthRepository
+import com.example.repository.MaterialRepository
 import com.example.repository.PostRepository
+import com.example.room.RoomController
 import com.example.security.JwtService
 import com.example.security.TokenService
 import com.example.security.hashing.HashingService
@@ -24,7 +26,9 @@ fun Application.module() {
     val hashingService: HashingService by inject()
     val authRepository: AuthRepository by inject()
     val postRepository: PostRepository by inject()
+    val materialRepository: MaterialRepository by inject()
     val tokenService: TokenService by inject()
+    val roomController: RoomController by inject()
     val tokenConfig = TokenConfig(
         issuer = "http://0.0.0.0:8080/",
         audience = "http://0.0.0.0:8080/hello",
@@ -35,11 +39,16 @@ fun Application.module() {
     configureSecurity(tokenConfig)
     configureMonitoring()
     configureSerialization()
+    configureSession()
+    configureSockets()
+
     configureRouting(
         hashingService = hashingService,
         authRepository = authRepository,
         postRepository = postRepository,
         tokenService = tokenService,
-        tokenConfig = tokenConfig
+        tokenConfig = tokenConfig,
+        roomController = roomController,
+        materialRepository = materialRepository
     )
 }

@@ -1,68 +1,76 @@
 package com.example.data.models
 
 import com.example.data.responses.PostResponse
-import kotlinx.serialization.Contextual
+import kotlinx.datetime.*
+
 import org.bson.codecs.pojo.annotations.BsonId
 import org.bson.types.ObjectId
+fun LocalDateTime.Companion.now() = Clock.System.now().toLocalDateTime(TimeZone.UTC)
 
-import java.time.LocalDateTime
 
 @kotlinx.serialization.Serializable
 data class Post(
-    val userId: String="",
-    val replyCount: Int=0,
-    val userName:String="",
-    val userPfp:String="",
-    val authorEmail: String="",
-    val title: String="",
-    val body: String="",
-    val votes: Int=0,
+    val replyCount: Int = 0,
+    val authorName: String = "",
+    val authorPfp: String = "",
+    val authorID: String = "",
+    val createdAt: Long = kotlinx.datetime.LocalDateTime.now().toInstant(TimeZone.UTC).epochSeconds,
+    val title: String = "",
+    val body: String = "",
+    val votes: Int = 0,
     val downvoted: List<String> = emptyList(),
     val upvoted: List<String> = emptyList(),
     val moderationStatus: String = "submitted",
-    val editStatus: Boolean = false,
+    val editedStatus: Boolean = false,
     val tags: List<Tag> = emptyList(),
-    val type: String = "all",
-    val attachments: List<PostAttachment> = emptyList(),
-    @Contextual val createdAt: LocalDateTime = LocalDateTime.now(),
-    @Contextual val updatedAt: LocalDateTime? = null,
-    @Contextual val deletedAt: LocalDateTime? = null,
-    @Contextual
+    val type: String = "general",
+    val attachments: List<PostFile> = emptyList(),
+    val lastModified: Long = kotlinx.datetime.LocalDateTime.now().toInstant(TimeZone.UTC).epochSeconds,
     @BsonId
     val id: String = ObjectId().toString(),
 
-) {
-    var user : User = User()
+    ) {
+    var user: User = User()
     fun toResponse() = PostResponse(
         id = id,
         title = title,
         body = body,
         tags = tags,
         attachments = attachments,
-        publishedAt = createdAt.toString(),
-        userName = userName,
-        userPfp = userPfp,
-        authorEmail = authorEmail,
+        createdAt = Instant.fromEpochSeconds(createdAt).toLocalDateTime(TimeZone.UTC),
+        authorName = authorName,
+        authorPfp = authorPfp,
+        authorID = authorID,
         moderationStatus = moderationStatus,
-        editStatus = editStatus,
+        editedStatus = editedStatus,
         type = type,
         votes = votes,
         downvoted = downvoted,
         upvoted = upvoted,
-        replyCount = replyCount
+        replyCount = replyCount,
+        lastModified = Instant.fromEpochSeconds(lastModified).toLocalDateTime(TimeZone.UTC)
 
 
-        )
+    )
 }
+
 @kotlinx.serialization.Serializable
 data class Tag(
-    val label: String="",
-    val hexColor: String="#000000",
+    @BsonId
+    val id: String = ObjectId().toString(),
+    val label: String = "",
+    val intColor: Int = 0,
+    val hexColor: String = "#000000",
 )
+
 @kotlinx.serialization.Serializable
-data class PostAttachment(
+data class PostFile(
+    val file: ByteArray = byteArrayOf(),
     val url: String = "",
     val name: String = "",
     val type: String = "",
     val size: Long = 0
 )
+
+
+

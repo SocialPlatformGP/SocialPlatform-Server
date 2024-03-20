@@ -6,12 +6,13 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class SignUpRequest(
-    val userFirstName: String="",
-    val userLastName: String="",
-    val userPassword: String="",
-    val userProfilePictureURL: String="",
-    val userEmail: String="",
-    val userPhoneNumber: String="",
-    val userBirthdate: String="",
-    val userBio: String="",
+    val firstName: String = "",
+    val lastName: String = "",
+    val password: String = "",
+    val profilePictureURL: String = "",
+    val email: String = "",
+    val phoneNumber: String = "",
+    val birthdate: Long=0L,
+    val bio: String = "",
+    val isAdmin: Boolean = false,
 )

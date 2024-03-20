@@ -6,5 +6,5 @@ import kotlinx.serialization.Serializable
 data class CreatePostRequest(
     val title: String="",
     val body: String="",
-    val userId: String="",
+    val authorID: String="",
 )
